@@ -18,8 +18,25 @@
 </head>
 <body>
   <h1>💌 Love Letter Maker</h1>
+  
   <input id="name" placeholder="Enter their name…">
   <input id="details" placeholder="Optional: Tell me about them (e.g., beautiful blue eyes, loves to laugh...)">
+  <input id="senderName" placeholder="Your name (will appear at the end)">
+  
+  <div style="display: flex; gap: 0.5rem; margin-top: 0.5rem;">
+    <select id="language" style="flex: 1; padding: 0.8rem; font-size: 1rem; border: 2px solid #e1e5e9; border-radius: 0.5rem; background: white;">
+      <option value="english">🇺🇸 English</option>
+      <option value="dutch">🇳🇱 Dutch</option>
+      <option value="spanish">🇪🇸 Spanish</option>
+    </select>
+    
+    <select id="length" style="flex: 1; padding: 0.8rem; font-size: 1rem; border: 2px solid #e1e5e9; border-radius: 0.5rem; background: white;">
+      <option value="normal">📝 Normal (~200 words)</option>
+      <option value="short">⚡ Short (~50 words)</option>
+      <option value="long">📜 Long (~300 words)</option>
+    </select>
+  </div>
+  
   <button id="go">Write it!</button>
   <pre id="out"></pre>
 
@@ -28,12 +45,18 @@
     document.addEventListener('DOMContentLoaded', function() {
       const nameInput = document.getElementById('name');
       const detailsInput = document.getElementById('details');
+      const senderNameInput = document.getElementById('senderName');
+      const languageSelect = document.getElementById('language');
+      const lengthSelect = document.getElementById('length');
       const goButton = document.getElementById('go');
       const output = document.getElementById('out');
       
       goButton.onclick = async () => {
         const nameValue = nameInput.value.trim();
         const detailsValue = detailsInput.value.trim();
+        const senderNameValue = senderNameInput.value.trim();
+        const languageValue = languageSelect.value;
+        const lengthValue = lengthSelect.value;
         
         // Input validation
         if (!nameValue) {
@@ -59,7 +82,10 @@
             headers:{"Content-Type":"application/json"},
             body: JSON.stringify({ 
               name: nameValue,
-              details: detailsValue 
+              details: detailsValue,
+              senderName: senderNameValue,
+              language: languageValue,
+              length: lengthValue
             })
           });
           
@@ -87,8 +113,8 @@
         }
       };
       
-      // Allow Enter key to trigger generation from either input
-      [nameInput, detailsInput].forEach(input => {
+      // Allow Enter key to trigger generation from any input
+      [nameInput, detailsInput, senderNameInput].forEach(input => {
         if (input) {
           input.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {

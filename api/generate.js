@@ -5,7 +5,14 @@ export default async function handler(req, res) {
     return res.status(405).json({ text: 'Method not allowed' });
   }
 
-  const { name = "", details = "", clue = "" } = req.body;
+  const { 
+    name = "", 
+    details = "", 
+    senderName = "",
+    language = "english",
+    length = "normal",
+    clue = "" 
+  } = req.body;
   
   // Handle both old and new API format for backwards compatibility
   const personName = name || clue;
@@ -15,16 +22,48 @@ export default async function handler(req, res) {
     return res.status(200).json({ text: "Please enter a name to write a love letter for." });
   }
   
-  // Build the prompt based on whether details are provided
-  let userPrompt = `Write a beautiful love letter addressed to someone named "${personName}". Make it heartfelt, romantic, and personal. Start with "My Dearest ${personName}," and end with "Forever yours," followed by a signature line.`;
+  // Language mapping
+  const languageMap = {
+    english: "English",
+    dutch: "Dutch (Nederlands)", 
+    spanish: "Spanish (Español)"
+  };
+  
+  // Length mapping  
+  const lengthMap = {
+    short: "short (around 50 words)",
+    normal: "normal length (around 200 words)", 
+    long: "long and detailed (around 300 words)"
+  };
+  
+  const selectedLanguage = languageMap[language] || "English";
+  const selectedLength = lengthMap[length] || "normal length (around 200 words)";
+  
+  // Build the enhanced prompt
+  let userPrompt = `Write a ${selectedLength} love letter in ${selectedLanguage} addressed to someone named "${personName}". Make it heartfelt, romantic, and personal.`;
+  
+  // Add language-specific greeting
+  if (language === "dutch") {
+    userPrompt += ` Start with "Mijn liefste ${personName}," and end with "Voor altijd de jouwe,"`;
+  } else if (language === "spanish") {
+    userPrompt += ` Start with "Mi querido/a ${personName}," and end with "Tuyo para siempre,"`;
+  } else {
+    userPrompt += ` Start with "My Dearest ${personName}," and end with "Forever yours,"`;
+  }
   
   if (details.trim()) {
     userPrompt += ` Include these personal details naturally in the letter: ${details}`;
   }
   
+  if (senderName.trim()) {
+    userPrompt += ` Sign the letter with the name "${senderName}".`;
+  } else {
+    userPrompt += ` End with a romantic signature line.`;
+  }
+  
   const messages = [
     { role: "system",
-      content: "You are a poetic assistant who writes heartfelt, original love letters. Write sincere, romantic letters that are personal but not overly cheesy. Always address the letter to the specific name provided. When given personal details, weave them naturally into the letter to make it more personal and meaningful." },
+      content: `You are a multilingual poetic assistant who writes heartfelt, original love letters in different languages. Write sincere, romantic letters that are personal but not overly cheesy. Always write in the specified language with proper grammar and natural expressions. When given personal details, weave them naturally into the letter. Follow the exact length requirements and use culturally appropriate romantic expressions for each language.` },
     { role: "user",
       content: userPrompt }
   ];

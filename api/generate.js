@@ -29,19 +29,23 @@ export default async function handler(req, res) {
       content: userPrompt }
   ];
 
+  const requestBody = {
+    model: "mistralai/mistral-7b-instruct:free",
+    messages
+  };
+  
+  console.log("Sending to OpenRouter:", JSON.stringify(requestBody, null, 2));
+
   try {
     const resp = await fetch("https://openrouter.ai/api/v1/chat/completions", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         "Authorization": `Bearer ${process.env.OPENROUTER_API_KEY}`,
-        "HTTP-Referer": "https://yourdomain.example",   // optional, shown on OR leaderboard
-        "X-Title": "LoveLetterDemo"                     // optional
+        "HTTP-Referer": "https://love-letter-generator.vercel.app",
+        "X-Title": "LoveLetterDemo"
       },
-      body: JSON.stringify({
-        model: "mistral-7b-instruct:free",
-        messages
-      })
+      body: JSON.stringify(requestBody)
     });
 
     console.log("OpenRouter response status:", resp.status);

@@ -63,16 +63,27 @@
             })
           });
           
+          console.log("API Response status:", r.status);
+          
           if (!r.ok) {
-            throw new Error(`API Error: ${r.status}`);
+            const errorText = await r.text();
+            console.error("API Error:", r.status, errorText);
+            output.textContent = `💔 API Error (${r.status}): ${errorText}`;
+            return;
           }
           
           const data = await r.json();
-          output.textContent = data.text || "💔 Something went wrong while writing your letter. Please try again.";
+          console.log("API Response data:", data);
+          
+          if (data.text) {
+            output.textContent = data.text;
+          } else {
+            output.textContent = `💔 No text in response. Got: ${JSON.stringify(data)}`;
+          }
           
         } catch (error) {
           console.error("Error generating love letter:", error);
-          output.textContent = "💔 Unable to write your letter right now. Please check your connection and try again.";
+          output.textContent = `💔 Error: ${error.message}`;
         }
       };
       

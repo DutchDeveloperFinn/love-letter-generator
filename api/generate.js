@@ -29,20 +29,50 @@ export default async function handler(req, res) {
       content: userPrompt }
   ];
 
-  const resp = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "Authorization": `Bearer ${process.env.OPENROUTER_API_KEY}`,
-      "HTTP-Referer": "https://yourdomain.example",   // optional, shown on OR leaderboard
-      "X-Title": "LoveLetterDemo"                     // optional
-    },
-    body: JSON.stringify({
-      model: "mistral-7b-instruct:free",
-      messages
-    })
-  }).then(r => r.json());
+  try {
+    const resp = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${process.env.OPENROUTER_API_KEY}`,
+        "HTTP-Referer": "https://yourdomain.example",   // optional, shown on OR leaderboard
+        "X-Title": "LoveLetterDemo"                     // optional
+      },
+      body: JSON.stringify({
+        model: "mistral-7b-instruct:free",
+        messages
+      })
+    });
 
-  return res.status(200).json({ text: resp.choices?.[0]?.message?.content });
+    console.log("OpenRouter response status:", resp.status);
+    
+    if (!resp.ok) {
+      const errorText = await resp.text();
+      console.error("OpenRouter API error:", resp.status, errorText);
+      return res.status(200).json({ 
+        text: `Sorry, I'm having trouble writing your letter right now. Please try again in a moment. (Error: ${resp.status})` 
+      });
+    }
+
+    const data = await resp.json();
+    console.log("OpenRouter response data:", JSON.stringify(data, null, 2));
+
+    const generatedText = data.choices?.[0]?.message?.content;
+    
+    if (!generatedText) {
+      console.error("No content in OpenRouter response:", data);
+      return res.status(200).json({ 
+        text: "I'm sorry, but I couldn't generate your love letter right now. Please try again!" 
+      });
+    }
+
+    return res.status(200).json({ text: generatedText });
+    
+  } catch (error) {
+    console.error("Error calling OpenRouter API:", error);
+    return res.status(200).json({ 
+      text: "I'm experiencing technical difficulties. Please try again in a moment!" 
+    });
+  }
 };
 

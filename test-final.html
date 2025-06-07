@@ -1,7 +1,7 @@
 <!doctype html>
 <html>
 <head>
-  <title>Love Letter Maker</title>
+  <title>Love Letter Maker - Final Test</title>
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <style>
     body{font-family:system-ui,sans-serif;max-width:620px;margin:4rem auto;padding:0 1rem;text-align:center;background:linear-gradient(135deg,#ffeef5,#f0f8ff);min-height:100vh}
@@ -13,13 +13,20 @@
     button:active{transform:translateY(0)}
     pre{white-space:pre-wrap;text-align:left;margin-top:2rem;background:white;padding:1.5rem;border-radius:.75rem;box-shadow:0 4px 12px rgba(0,0,0,.1);border:1px solid #e1e5e9;line-height:1.6}
     h1{color:#333;margin-bottom:1rem;font-size:2rem}
-    .footer{margin-top:3rem;font-size:.9rem;color:#666;opacity:.8}
+    .test-note{background:#e8f4fd;padding:1rem;border-radius:.5rem;margin-bottom:2rem;color:#0066cc;border:1px solid #b3d9ff}
+    .example{font-size:.9rem;color:#666;margin-top:.3rem;text-align:left;padding-left:.5rem}
   </style>
 </head>
 <body>
+  <div class="test-note">
+    <strong>🧪 Final Test Version</strong><br>
+    Testing the new personal details feature! Try adding details like "beautiful green eyes" or "loves hiking".
+  </div>
+  
   <h1>💌 Love Letter Maker</h1>
   <input id="name" placeholder="Enter their name…">
   <input id="details" placeholder="Optional: Tell me about them (e.g., beautiful blue eyes, loves to laugh...)">
+  <div class="example">💡 Examples: "has beautiful green eyes", "loves hiking and coffee", "makes me laugh every day"</div>
   <button id="go">Write it!</button>
   <pre id="out"></pre>
 
@@ -47,21 +54,37 @@
       out.textContent = "Writing your love letter… 💕";
       
       try {
-        const r = await fetch("/api/generate", {
-          method:"POST",
-          headers:{"Content-Type":"application/json"},
-          body: JSON.stringify({ 
-            name: nameValue,
-            details: detailsValue 
-          })
-        });
+        // Simulate API delay
+        await new Promise(resolve => setTimeout(resolve, 2500));
         
-        if (!r.ok) {
-          throw new Error(`API Error: ${r.status}`);
+        // Enhanced mock love letter with details integration
+        let mockLetter = `My Dearest ${nameValue},
+
+From the moment I first saw you, my world changed completely. Your smile lights up even the darkest days, and your laughter is the melody that my heart dances to.`;
+
+        if (detailsValue) {
+          // Add personalized details
+          if (detailsValue.toLowerCase().includes('eyes')) {
+            mockLetter += `\n\nEvery time I look into your eyes, I see my future reflected back at me. ${detailsValue.charAt(0).toUpperCase() + detailsValue.slice(1)} - they captivate me more each day.`;
+          } else if (detailsValue.toLowerCase().includes('laugh')) {
+            mockLetter += `\n\nThe way you laugh fills my heart with pure joy. ${detailsValue.charAt(0).toUpperCase() + detailsValue.slice(1)} - it's one of the countless reasons I fell for you.`;
+          } else {
+            mockLetter += `\n\nWhat makes you even more special is how ${detailsValue}. These beautiful qualities of yours make me fall deeper in love with you every single day.`;
+          }
         }
-        
-        const data = await r.json();
-        out.textContent = data.text || "💔 Something went wrong while writing your letter. Please try again.";
+
+        mockLetter += `
+
+Every morning I wake up grateful for your presence in my life, ${nameValue}. You bring out the best in me, and with you, I feel like I can conquer anything. Your kindness, your intelligence, and your beautiful soul inspire me every single day.
+
+I promise to love you not just for who you are today, but for who you're becoming. Through every season of life, through every challenge and triumph, I want to be right there beside you, ${nameValue}.
+
+You are my sunshine, my anchor, and my greatest adventure. I love you more than words could ever express, and I can't imagine my life without you in it.
+
+Forever yours,
+Your devoted admirer ❤️`;
+
+        out.textContent = mockLetter;
         
       } catch (error) {
         console.error("Error generating love letter:", error);
@@ -79,5 +102,4 @@
     });
   </script>
 </body>
-</html>
-
+</html> 

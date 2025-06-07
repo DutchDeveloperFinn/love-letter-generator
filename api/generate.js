@@ -1,12 +1,30 @@
 export const config = { runtime: "edge" };           // fast, cold-start-free
 
 export default async (req) => {
-  const { clue = "" } = await req.json();
+  const { name = "", details = "", clue = "" } = await req.json();
+  
+  // Handle both old and new API format for backwards compatibility
+  const personName = name || clue;
+  
+  // Handle empty input
+  if (!personName.trim()) {
+    return new Response(JSON.stringify({ text: "Please enter a name to write a love letter for." }), {
+      headers: { "Content-Type": "application/json" }
+    });
+  }
+  
+  // Build the prompt based on whether details are provided
+  let userPrompt = `Write a beautiful love letter addressed to someone named "${personName}". Make it heartfelt, romantic, and personal. Start with "My Dearest ${personName}," and end with "Forever yours," followed by a signature line.`;
+  
+  if (details.trim()) {
+    userPrompt += ` Include these personal details naturally in the letter: ${details}`;
+  }
+  
   const messages = [
     { role: "system",
-      content: "You are a poetic assistant who writes heartfelt, original love letters (tone: sincere, not cheesy)." },
+      content: "You are a poetic assistant who writes heartfelt, original love letters. Write sincere, romantic letters that are personal but not overly cheesy. Always address the letter to the specific name provided. When given personal details, weave them naturally into the letter to make it more personal and meaningful." },
     { role: "user",
-      content: `Write a love letter. Details: ${clue}` }
+      content: userPrompt }
   ];
 
   const resp = await fetch("https://openrouter.ai/api/v1/chat/completions", {

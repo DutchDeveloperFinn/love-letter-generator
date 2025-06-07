@@ -1,7 +1,7 @@
 <!doctype html>
 <html>
 <head>
-  <title>Love Letter Maker</title>
+  <title>Love Letter Maker - Enhanced Test</title>
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <style>
     body{font-family:system-ui,sans-serif;max-width:620px;margin:4rem auto;padding:0 1rem;text-align:center;background:linear-gradient(135deg,#ffeef5,#f0f8ff);min-height:100vh}
@@ -13,55 +13,56 @@
     button:active{transform:translateY(0)}
     pre{white-space:pre-wrap;text-align:left;margin-top:2rem;background:white;padding:1.5rem;border-radius:.75rem;box-shadow:0 4px 12px rgba(0,0,0,.1);border:1px solid #e1e5e9;line-height:1.6}
     h1{color:#333;margin-bottom:1rem;font-size:2rem}
-    .footer{margin-top:3rem;font-size:.9rem;color:#666;opacity:.8}
+    .test-note{background:#e8f4fd;padding:1rem;border-radius:.5rem;margin-bottom:2rem;color:#0066cc;border:1px solid #b3d9ff}
   </style>
 </head>
 <body>
-  <h1>💌 Love Letter Maker</h1>
-  <input id="name" placeholder="Enter their name…">
-  <input id="details" placeholder="Optional: Tell me about them (e.g., beautiful blue eyes, loves to laugh...)">
+  <div class="test-note">
+    <strong>🧪 Enhanced Test Version</strong><br>
+    Testing all Phase 2 improvements: better prompts, error handling, UI/UX, and input validation.
+  </div>
+  
+  <h1>Love Letter Maker</h1>
+  <input id="prompt" placeholder="Enter their name…">
   <button id="go">Write it!</button>
   <pre id="out"></pre>
 
   <script>
     go.onclick = async () => {
-      const nameValue = name.value.trim();
-      const detailsValue = details.value.trim();
+      const name = prompt.value.trim();
       
       // Input validation
-      if (!nameValue) {
+      if (!name) {
         out.textContent = "💔 Please enter a name first!";
         return;
       }
       
-      if (nameValue.length > 50) {
+      if (name.length > 50) {
         out.textContent = "💔 Please enter a shorter name (50 characters max).";
-        return;
-      }
-      
-      if (detailsValue.length > 200) {
-        out.textContent = "💔 Please keep details under 200 characters.";
         return;
       }
       
       out.textContent = "Writing your love letter… 💕";
       
       try {
-        const r = await fetch("/api/generate", {
-          method:"POST",
-          headers:{"Content-Type":"application/json"},
-          body: JSON.stringify({ 
-            name: nameValue,
-            details: detailsValue 
-          })
-        });
+        // Simulate API delay
+        await new Promise(resolve => setTimeout(resolve, 2000));
         
-        if (!r.ok) {
-          throw new Error(`API Error: ${r.status}`);
-        }
-        
-        const data = await r.json();
-        out.textContent = data.text || "💔 Something went wrong while writing your letter. Please try again.";
+        // Enhanced mock love letter with better name integration
+        const mockLetter = `My Dearest ${name},
+
+From the moment I first saw you, my world changed completely. Your smile lights up even the darkest days, and your laughter is the melody that my heart dances to.
+
+Every morning I wake up grateful for your presence in my life, ${name}. You bring out the best in me, and with you, I feel like I can conquer anything. Your kindness, your intelligence, and your beautiful soul inspire me every single day.
+
+I promise to love you not just for who you are today, but for who you're becoming. Through every season of life, through every challenge and triumph, I want to be right there beside you, ${name}.
+
+You are my sunshine, my anchor, and my greatest adventure. I love you more than words could ever express, and I can't imagine my life without you in it.
+
+Forever yours,
+Your devoted admirer ❤️`;
+
+        out.textContent = mockLetter;
         
       } catch (error) {
         console.error("Error generating love letter:", error);
@@ -69,15 +70,12 @@
       }
     };
     
-    // Allow Enter key to trigger generation from either input
-    [name, details].forEach(input => {
-      input.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') {
-          go.click();
-        }
-      });
+    // Allow Enter key to trigger generation
+    prompt.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        go.click();
+      }
     });
   </script>
 </body>
-</html>
-
+</html> 

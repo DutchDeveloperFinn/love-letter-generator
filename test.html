@@ -1,0 +1,56 @@
+<!doctype html>
+<html>
+<head>
+  <title>Love Letter Maker - Test Version</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <style>
+    body{font-family:sans-serif;max-width:620px;margin:4rem auto;padding:0 1rem;text-align:center}
+    input,button{padding:.8rem;font-size:1rem;width:100%;margin-top:.5rem}
+    pre{white-space:pre-wrap;text-align:left;margin-top:2rem;background:#fafafa;padding:1rem;border-radius:.5rem}
+    .test-note{background:#e8f4fd;padding:1rem;border-radius:.5rem;margin-bottom:2rem;color:#0066cc}
+  </style>
+</head>
+<body>
+  <div class="test-note">
+    <strong>🧪 Test Version</strong><br>
+    This is a test version that simulates the love letter generation without requiring API setup.
+  </div>
+  
+  <h1>💌 Love Letter Maker</h1>
+  <input id="prompt" placeholder="Enter the name of your beloved…">
+  <button id="go">Write it!</button>
+  <pre id="out"></pre>
+
+  <script>
+    go.onclick = async () => {
+      const name = prompt.value.trim();
+      
+      if (!name) {
+        out.textContent = "Please enter a name first!";
+        return;
+      }
+      
+      out.textContent = "Writing…";
+      
+      // Simulate API delay
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      
+      // Mock love letter response
+      const mockLetter = `My Dearest ${name},
+
+From the moment I first saw you, my world changed completely. Your smile lights up even the darkest days, and your laughter is the melody that my heart dances to.
+
+Every morning I wake up grateful for your presence in my life. You bring out the best in me, and with you, I feel like I can conquer anything. Your kindness, your intelligence, and your beautiful soul inspire me every single day.
+
+I promise to love you not just for who you are today, but for who you're becoming. Through every season of life, through every challenge and triumph, I want to be right there beside you.
+
+${name}, you are my sunshine, my anchor, and my greatest adventure. I love you more than words could ever express.
+
+Forever yours,
+Your devoted admirer ❤️`;
+
+      out.textContent = mockLetter;
+    };
+  </script>
+</body>
+</html> 

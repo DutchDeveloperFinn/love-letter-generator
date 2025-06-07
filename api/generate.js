@@ -1,4 +1,6 @@
-export const config = { runtime: "edge" };           // fast, cold-start-free
+export const config = { 
+  runtime: "edge"
+};
 
 export default async (req) => {
   const { name = "", details = "", clue = "" } = await req.json();

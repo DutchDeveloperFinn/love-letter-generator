@@ -24,56 +24,66 @@
   <pre id="out"></pre>
 
   <script>
-    go.onclick = async () => {
-      const nameValue = name.value.trim();
-      const detailsValue = details.value.trim();
+    // Wait for page to load before setting up event listeners
+    document.addEventListener('DOMContentLoaded', function() {
+      const nameInput = document.getElementById('name');
+      const detailsInput = document.getElementById('details');
+      const goButton = document.getElementById('go');
+      const output = document.getElementById('out');
       
-      // Input validation
-      if (!nameValue) {
-        out.textContent = "💔 Please enter a name first!";
-        return;
-      }
-      
-      if (nameValue.length > 50) {
-        out.textContent = "💔 Please enter a shorter name (50 characters max).";
-        return;
-      }
-      
-      if (detailsValue.length > 200) {
-        out.textContent = "💔 Please keep details under 200 characters.";
-        return;
-      }
-      
-      out.textContent = "Writing your love letter… 💕";
-      
-      try {
-        const r = await fetch("/api/generate", {
-          method:"POST",
-          headers:{"Content-Type":"application/json"},
-          body: JSON.stringify({ 
-            name: nameValue,
-            details: detailsValue 
-          })
-        });
+      goButton.onclick = async () => {
+        const nameValue = nameInput.value.trim();
+        const detailsValue = detailsInput.value.trim();
         
-        if (!r.ok) {
-          throw new Error(`API Error: ${r.status}`);
+        // Input validation
+        if (!nameValue) {
+          output.textContent = "💔 Please enter a name first!";
+          return;
         }
         
-        const data = await r.json();
-        out.textContent = data.text || "💔 Something went wrong while writing your letter. Please try again.";
+        if (nameValue.length > 50) {
+          output.textContent = "💔 Please enter a shorter name (50 characters max).";
+          return;
+        }
         
-      } catch (error) {
-        console.error("Error generating love letter:", error);
-        out.textContent = "💔 Unable to write your letter right now. Please check your connection and try again.";
-      }
-    };
-    
-    // Allow Enter key to trigger generation from either input
-    [name, details].forEach(input => {
-      input.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') {
-          go.click();
+        if (detailsValue.length > 200) {
+          output.textContent = "💔 Please keep details under 200 characters.";
+          return;
+        }
+        
+        output.textContent = "Writing your love letter… 💕";
+        
+        try {
+          const r = await fetch("/api/generate", {
+            method:"POST",
+            headers:{"Content-Type":"application/json"},
+            body: JSON.stringify({ 
+              name: nameValue,
+              details: detailsValue 
+            })
+          });
+          
+          if (!r.ok) {
+            throw new Error(`API Error: ${r.status}`);
+          }
+          
+          const data = await r.json();
+          output.textContent = data.text || "💔 Something went wrong while writing your letter. Please try again.";
+          
+        } catch (error) {
+          console.error("Error generating love letter:", error);
+          output.textContent = "💔 Unable to write your letter right now. Please check your connection and try again.";
+        }
+      };
+      
+      // Allow Enter key to trigger generation from either input
+      [nameInput, detailsInput].forEach(input => {
+        if (input) {
+          input.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+              goButton.click();
+            }
+          });
         }
       });
     });

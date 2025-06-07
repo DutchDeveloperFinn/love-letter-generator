@@ -1,18 +1,18 @@
-export const config = { 
-  runtime: "edge"
-};
+// Using standard Node.js runtime for better compatibility
 
-export default async (req) => {
-  const { name = "", details = "", clue = "" } = await req.json();
+export default async function handler(req, res) {
+  if (req.method !== 'POST') {
+    return res.status(405).json({ text: 'Method not allowed' });
+  }
+
+  const { name = "", details = "", clue = "" } = req.body;
   
   // Handle both old and new API format for backwards compatibility
   const personName = name || clue;
   
   // Handle empty input
   if (!personName.trim()) {
-    return new Response(JSON.stringify({ text: "Please enter a name to write a love letter for." }), {
-      headers: { "Content-Type": "application/json" }
-    });
+    return res.status(200).json({ text: "Please enter a name to write a love letter for." });
   }
   
   // Build the prompt based on whether details are provided
@@ -43,8 +43,6 @@ export default async (req) => {
     })
   }).then(r => r.json());
 
-  return new Response(JSON.stringify({ text: resp.choices?.[0]?.message?.content }), {
-    headers: { "Content-Type": "application/json" }
-  });
+  return res.status(200).json({ text: resp.choices?.[0]?.message?.content });
 };
 

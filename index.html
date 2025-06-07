@@ -1,0 +1,31 @@
+<!doctype html>
+<html>
+<head>
+  <title>Love Letter Maker</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <style>
+    body{font-family:sans-serif;max-width:620px;margin:4rem auto;padding:0 1rem;text-align:center}
+    input,button{padding:.8rem;font-size:1rem;width:100%;margin-top:.5rem}
+    pre{white-space:pre-wrap;text-align:left;margin-top:2rem;background:#fafafa;padding:1rem;border-radius:.5rem}
+  </style>
+</head>
+<body>
+  <h1>💌 Love Letter Maker</h1>
+  <input id="prompt" placeholder="Describe your beloved…">
+  <button id="go">Write it!</button>
+  <pre id="out"></pre>
+
+  <script>
+    go.onclick = async () => {
+      out.textContent = "Writing…";
+      const r = await fetch("/api/generate", {
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body: JSON.stringify({ clue: prompt.value })
+      });
+      out.textContent = (await r.json()).text || "Something went wrong.";
+    };
+  </script>
+</body>
+</html>
+
